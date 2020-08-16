@@ -71,19 +71,19 @@ func getAllEvents(w http.ResponseWriter, r *http.Request) {
 func updateEvent(w http.ResponseWriter, r *http.Request) {
 	// Get the ID from the url
 	eventID := mux.Vars(r)["id"]
-	var updatedEvent event
+	var updatedEvent []event
 	// Convert r.Body into a readable formart
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		fmt.Fprintf(w, "Kindly enter data with the event title and description only in order to update")
 	}
-
+	log.Println(string(reqBody))
 	json.Unmarshal(reqBody, &updatedEvent)
 
 	for i, singleEvent := range events {
 		if singleEvent.ID == eventID {
-			singleEvent.Title = updatedEvent.Title
-			singleEvent.Description = updatedEvent.Description
+			singleEvent.Title = updatedEvent[0].Title
+			singleEvent.Description = updatedEvent[0].Description
 			events[i] = singleEvent
 			json.NewEncoder(w).Encode(singleEvent)
 		}
