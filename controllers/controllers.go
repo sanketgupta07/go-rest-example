@@ -7,16 +7,12 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/sanketgupta07/go-rest-example/model"
+
 	"github.com/gorilla/mux"
 )
 
-type event struct {
-	ID          string `json:"ID"`
-	Title       string `json:"Title"`
-	Description string `json:"Description"`
-}
-
-type allEvents []event
+type allEvents []model.Event
 
 var events = allEvents{
 	{
@@ -26,17 +22,19 @@ var events = allEvents{
 	},
 }
 
+//HomeLink -- welcome page for browser
 func HomeLink(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome home!")
 }
 
+//CreateEvent a new event
 func CreateEvent(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		panic(err)
 	}
 	log.Println(string(body))
-	var newEvent []event
+	var newEvent []model.Event
 	err = json.Unmarshal(body, &newEvent)
 	if err != nil {
 		panic(err)
@@ -71,7 +69,7 @@ func GetAllEvents(w http.ResponseWriter, r *http.Request) {
 func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	// Get the ID from the url
 	eventID := mux.Vars(r)["id"]
-	var updatedEvent []event
+	var updatedEvent []model.Event
 	// Convert r.Body into a readable formart
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
