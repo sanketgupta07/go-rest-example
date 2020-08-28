@@ -1,26 +1,21 @@
 package controllers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 
-	"github.com/sanketgupta07/go-rest-example/model"
-
 	"github.com/gorilla/mux"
+	"github.com/sanketgupta07/go-rest-example/dbconfig"
+	"github.com/sanketgupta07/go-rest-example/model"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
-type allEvents []model.Event
+type allEvents []model.User
 
-var events = allEvents{
-	{
-		ID:          "1",
-		Title:       "Introduction to Golang",
-		Description: "Come join us for a chance to learn how golang works and get to eventually try it out",
-	},
-}
+var userCollection = dbconfig.GetDB().Database("goTest").Collection("users")
 
 //HomeLink -- welcome page for browser
 func HomeLink(w http.ResponseWriter, r *http.Request) {
@@ -29,75 +24,91 @@ func HomeLink(w http.ResponseWriter, r *http.Request) {
 
 //CreateEvent a new event
 func CreateEvent(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
+	w.Header().Set("Content-Type", "application/json") // for adding       //Content-type
+	var user model.User
+	err := json.NewDecoder(r.Body).Decode(&user) // storing in person   //variable of type user
 	if err != nil {
-		panic(err)
+		fmt.Print(err)
 	}
-	log.Println(string(body))
-	var newEvent []model.Event
-	err = json.Unmarshal(body, &newEvent)
+	log.Println("User: ", user)
+	insertResult, err := userCollection.InsertOne(context.TODO(), user)
 	if err != nil {
-		panic(err)
+		log.Print(err)
 	}
-
-	// Add the newly created event to the array of events
-	events = append(events, newEvent...)
-
-	// Return the 201 created status code
-	w.WriteHeader(http.StatusCreated)
-	// Return the newly created event
-	json.NewEncoder(w).Encode(newEvent)
+	log.Println("inserted User: ", insertResult)
+	json.NewEncoder(w).Encode(insertResult.InsertedID) // return the //mongodb ID of generated document
 }
 
+// GetOneEvent from collection
 func GetOneEvent(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	// Get the ID from the url
-	eventID := mux.Vars(r)["id"]
-
-	// Get the details from an existing event
-	// Use the blank identifier to avoid creating a value that will not be used
-	for _, singleEvent := range events {
-		if singleEvent.ID == eventID {
-			json.NewEncoder(w).Encode(singleEvent)
-		}
-	}
-}
-
-func GetAllEvents(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(events)
-}
-
-func UpdateEvent(w http.ResponseWriter, r *http.Request) {
-	// Get the ID from the url
-	eventID := mux.Vars(r)["id"]
-	var updatedEvent []model.Event
-	// Convert r.Body into a readable formart
-	reqBody, err := ioutil.ReadAll(r.Body)
+	user := model.User{}
+	name := mux.Vars(r)["name"] //in string
+	log.Println("Name: ", name)
+	err := userCollection.FindOne(context.TODO(), bson.D{{"name", name}}).Decode(&user)
 	if err != nil {
-		fmt.Fprintf(w, "Kindly enter data with the event title and description only in order to update")
+		log.Print(err)
 	}
-	log.Println(string(reqBody))
-	json.Unmarshal(reqBody, &updatedEvent)
 
-	for i, singleEvent := range events {
-		if singleEvent.ID == eventID {
-			singleEvent.Title = updatedEvent[0].Title
-			singleEvent.Description = updatedEvent[0].Description
-			events[i] = singleEvent
-			json.NewEncoder(w).Encode(singleEvent)
-		}
-	}
+	json.NewEncoder(w).Encode(user)
 }
 
-func DeleteEvent(w http.ResponseWriter, r *http.Request) {
-	// Get the ID from the url
-	eventID := mux.Vars(r)["id"]
+// GetAllEvents from collection
+func GetAllEvents(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var users []model.User
 
-	// Get the details from an existing event
-	// Use the blank identifier to avoid creating a value that will not be used
-	for i, singleEvent := range events {
-		if singleEvent.ID == eventID {
-			events = append(events[:i], events[i+1:]...)
-			fmt.Fprintf(w, "The event with ID %v has been deleted successfully", eventID)
-		}
+	cursor, err := userCollection.Find(context.Background(), bson.M{})
+	if err != nil {
+		log.Print(err)
 	}
+
+	defer cursor.Close(context.Background())
+	for cursor.Next(context.Background()) {
+		var user model.User
+		if err = cursor.Decode(&user); err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(user)
+		users = append(users, user)
+	}
+	json.NewEncoder(w).Encode(users)
+}
+
+//UpdateEvent  to update event
+func UpdateEvent(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json") // for adding       //Content-type
+	name := mux.Vars(r)["name"]                        //in string
+	log.Println("Name: ", name)
+	var user model.User
+	err := json.NewDecoder(r.Body).Decode(&user) // storing in person   //variable of type user
+	if err != nil {
+		fmt.Print(err)
+	}
+	log.Println("User: ", user)
+	filter := bson.D{{"name", name}}
+	update := bson.D{{"$set", bson.D{{"address", user.Address}}}}
+	updatedResult, err := userCollection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		log.Print(err)
+	}
+	log.Println("inserted User: ", updatedResult)
+	json.NewEncoder(w).Encode(updatedResult) // return the //mongodb ID of generated document
+
+}
+
+//DeleteEvent from collection
+func DeleteEvent(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json") // for adding       //Content-type
+	name := mux.Vars(r)["name"]                        //in string
+	log.Println("Name: ", name)
+
+	del, err := userCollection.DeleteOne(context.TODO(), bson.D{{"name", name}})
+	if err != nil {
+		log.Print(err)
+	}
+	log.Println("Deleted Result: ", del)
+	json.NewEncoder(w).Encode(del) // return the //mongodb ID of generated document
+
 }

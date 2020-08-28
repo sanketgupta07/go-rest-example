@@ -4,9 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/sanketgupta07/go-rest-example/routes"
-
 	"github.com/gorilla/mux"
+	"github.com/sanketgupta07/go-rest-example/routes"
 )
 
 func main() {
