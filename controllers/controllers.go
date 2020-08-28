@@ -22,8 +22,8 @@ func HomeLink(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome home!")
 }
 
-//CreateEvent a new event
-func CreateEvent(w http.ResponseWriter, r *http.Request) {
+//CreateUser a new user
+func CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json") // for adding       //Content-type
 	var user model.User
 	err := json.NewDecoder(r.Body).Decode(&user) // storing in person   //variable of type user
@@ -39,8 +39,8 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(insertResult.InsertedID) // return the //mongodb ID of generated document
 }
 
-// GetOneEvent from collection
-func GetOneEvent(w http.ResponseWriter, r *http.Request) {
+// GetOneUser from collection
+func GetOneUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	// Get the ID from the url
 	user := model.User{}
@@ -54,8 +54,8 @@ func GetOneEvent(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-// GetAllEvents from collection
-func GetAllEvents(w http.ResponseWriter, r *http.Request) {
+// GetAllUsers from collection
+func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var users []model.User
 
@@ -76,8 +76,8 @@ func GetAllEvents(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(users)
 }
 
-//UpdateEvent  to update event
-func UpdateEvent(w http.ResponseWriter, r *http.Request) {
+//UpdateUser  to update event
+func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json") // for adding       //Content-type
 	name := mux.Vars(r)["name"]                        //in string
 	log.Println("Name: ", name)
@@ -98,8 +98,8 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//DeleteEvent from collection
-func DeleteEvent(w http.ResponseWriter, r *http.Request) {
+//DeleteUser from collection
+func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json") // for adding       //Content-type
 	name := mux.Vars(r)["name"]                        //in string
 	log.Println("Name: ", name)
