@@ -7,9 +7,9 @@ import (
 
 func Routers(router *mux.Router) {
 	router.HandleFunc("/", controllers.HomeLink)
-	router.HandleFunc("/event", controllers.CreateEvent).Methods("POST")
-	router.HandleFunc("/events", controllers.GetAllEvents).Methods("GET")
-	router.HandleFunc("/events/{name}", controllers.GetOneEvent).Methods("GET")
-	router.HandleFunc("/events/{name}", controllers.UpdateEvent).Methods("PATCH")
-	router.HandleFunc("/events/{name}", controllers.DeleteEvent).Methods("DELETE")
+	router.HandleFunc("/user", controllers.CreateEvent).Methods("POST")
+	router.HandleFunc("/users", controllers.GetAllEvents).Methods("GET")
+	router.HandleFunc("/users/{name}", controllers.GetOneEvent).Methods("GET")
+	router.HandleFunc("/users/{name}", controllers.UpdateEvent).Methods("PATCH")
+	router.HandleFunc("/users/{name}", controllers.DeleteEvent).Methods("DELETE")
 }
