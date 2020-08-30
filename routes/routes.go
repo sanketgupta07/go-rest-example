@@ -5,6 +5,7 @@ import (
 	"github.com/sanketgupta07/go-rest-example/controllers"
 )
 
+//Routers define all the endpoint route
 func Routers(router *mux.Router) {
 	router.HandleFunc("/", controllers.HomeLink)
 	router.HandleFunc("/user", controllers.CreateUser).Methods("POST")
