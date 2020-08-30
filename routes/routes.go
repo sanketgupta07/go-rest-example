@@ -13,4 +13,6 @@ func Routers(router *mux.Router) {
 	router.HandleFunc("/users/{name}", controllers.GetOneUser).Methods("GET")
 	router.HandleFunc("/users/{name}", controllers.UpdateUser).Methods("PATCH")
 	router.HandleFunc("/users/{name}", controllers.DeleteUser).Methods("DELETE")
+
+	router.HandleFunc("/pokemon", controllers.PokeGetClient).Methods("GET")
 }
