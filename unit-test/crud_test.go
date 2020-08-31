@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/sanketgupta07/go-rest-example/controllers"
+	"github.com/sanketgupta07/go-rest-example/util/constants"
 )
 
 // Test function should start with Test*
@@ -37,9 +38,10 @@ func TestHomeLink(t *testing.T) {
 	}
 }
 
+// Test Created user
 func TestCreateUser(t *testing.T) {
 	testUser := []byte(`{"Name": "Sonal","Age": 30,"Address": "Test Address 123"}`)
-	request, err := http.NewRequest(http.MethodPost, "/user", bytes.NewBuffer(testUser))
+	request, err := http.NewRequest(http.MethodPost, constants.EndpointCreateUser, bytes.NewBuffer(testUser))
 
 	if err != nil {
 		t.Fatal("Error in running test for HomeLink. ", err)
