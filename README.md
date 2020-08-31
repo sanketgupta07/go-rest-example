@@ -3,4 +3,6 @@ go rest api
 
 -- added modules
 
-CRUD operation with mongodb
+-- added CRUD operation with mongodb
+
+-- added rest client to consume a rest url
