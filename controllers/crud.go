@@ -36,7 +36,14 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 	}
 	log.Println("inserted User: ", insertResult)
-	json.NewEncoder(w).Encode(insertResult.InsertedID) // return the //mongodb ID of generated document
+	// json.NewEncoder(w).Encode(insertResult.InsertedID) // return the //mongodb ID of generated document
+	var iUser model.User
+	er := userCollection.FindOne(context.TODO(), bson.D{{"_id", insertResult.InsertedID}}).Decode(&iUser)
+	if er != nil {
+		log.Print(er)
+	}
+
+	json.NewEncoder(w).Encode(iUser)
 }
 
 // GetOneUser from collection
