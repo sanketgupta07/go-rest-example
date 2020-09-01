@@ -10,3 +10,5 @@ go rest api
 -- added unit testing Ref: https://codeburst.io/unit-testing-for-rest-apis-in-go-86c70dada52d
 
 --added constants
+
+--added Dockerfile
