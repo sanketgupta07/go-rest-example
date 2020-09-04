@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/sanketgupta07/go-rest-example/util/header"
+
 	"github.com/gorilla/mux"
 	"github.com/sanketgupta07/go-rest-example/dbconfig"
 	"github.com/sanketgupta07/go-rest-example/model"
@@ -19,11 +21,19 @@ var userCollection = dbconfig.GetDB().Database("goTest").Collection("users")
 
 //HomeLink -- welcome page for browser
 func HomeLink(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome home!")
+	header.EnableCors(&w)
+	var data = struct {
+		Title string `json:"title"`
+	}{
+		Title: "Golang + Angular Starter Kit",
+	}
+
+	json.NewEncoder(w).Encode(data)
 }
 
 //CreateUser a new user
 func CreateUser(w http.ResponseWriter, r *http.Request) {
+	header.EnableCors(&w)
 	w.Header().Set("Content-Type", "application/json") // for adding       //Content-type
 	var user model.User
 	err := json.NewDecoder(r.Body).Decode(&user) // storing in person   //variable of type user
