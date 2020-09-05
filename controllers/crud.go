@@ -58,6 +58,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 // GetOneUser from collection
 func GetOneUser(w http.ResponseWriter, r *http.Request) {
+	header.EnableCors(&w)
 	w.Header().Set("Content-Type", "application/json")
 	// Get the ID from the url
 	user := model.User{}
@@ -73,6 +74,7 @@ func GetOneUser(w http.ResponseWriter, r *http.Request) {
 
 // GetAllUsers from collection
 func GetAllUsers(w http.ResponseWriter, r *http.Request) {
+	header.EnableCors(&w)
 	w.Header().Set("Content-Type", "application/json")
 	var users []model.User
 
@@ -95,6 +97,7 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 
 //UpdateUser  to update event
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
+	header.EnableCors(&w)
 	w.Header().Set("Content-Type", "application/json") // for adding       //Content-type
 	name := mux.Vars(r)["name"]                        //in string
 	log.Println("Name: ", name)
@@ -117,6 +120,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 //DeleteUser from collection
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
+	header.EnableCors(&w)
 	w.Header().Set("Content-Type", "application/json") // for adding       //Content-type
 	name := mux.Vars(r)["name"]                        //in string
 	log.Println("Name: ", name)
