@@ -48,7 +48,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	log.Println("inserted User: ", insertResult)
 	// json.NewEncoder(w).Encode(insertResult.InsertedID) // return the //mongodb ID of generated document
 	var iUser model.User
-	er := userCollection.FindOne(context.TODO(), bson.D{{"_id", insertResult.InsertedID}}).Decode(&iUser)
+	er := userCollection.FindOne(context.TODO(), bson.D{{Key: "_id", Value: insertResult.InsertedID}}).Decode(&iUser)
 	if er != nil {
 		log.Print(er)
 	}
@@ -64,7 +64,7 @@ func GetOneUser(w http.ResponseWriter, r *http.Request) {
 	user := model.User{}
 	name := mux.Vars(r)["name"] //in string
 	log.Println("Name: ", name)
-	err := userCollection.FindOne(context.TODO(), bson.D{{"name", name}}).Decode(&user)
+	err := userCollection.FindOne(context.TODO(), bson.D{{Key: "name", Value: name}}).Decode(&user)
 	if err != nil {
 		log.Print(err)
 	}
@@ -107,8 +107,8 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		fmt.Print(err)
 	}
 	log.Println("User: ", user)
-	filter := bson.D{{"name", name}}
-	update := bson.D{{"$set", bson.D{{"address", user.Address}}}}
+	filter := bson.D{{Key: "name", Value: name}}
+	update := bson.D{{Key: "$set", Value: bson.D{{Key: "address", Value: user.Address}}}}
 	updatedResult, err := userCollection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		log.Print(err)
@@ -125,7 +125,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	name := mux.Vars(r)["name"]                        //in string
 	log.Println("Name: ", name)
 
-	del, err := userCollection.DeleteOne(context.TODO(), bson.D{{"name", name}})
+	del, err := userCollection.DeleteOne(context.TODO(), bson.D{{Key: "name", Value: name}})
 	if err != nil {
 		log.Print(err)
 	}
